@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
-use App\Traits\FilterByUser;
+use App\Traits\FilterByTenant;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Project extends Model
 {
-    use FilterByUser;
+    use FilterByTenant;
+
     protected $fillable = ['name', 'user_id'];
 
 
