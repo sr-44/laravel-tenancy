@@ -47,6 +47,7 @@ class RegisteredUserController extends Controller
             'name' => $request->name . ' Team',
         ]);
         $tenant->users()->attach($user->id);
+        $user->update(['current_tenant_id' => $tenant->id]);
         event(new Registered($user));
 
         Auth::login($user);
