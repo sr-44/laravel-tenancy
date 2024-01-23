@@ -21,11 +21,15 @@ class VerifySubdomain
             $user = auth()->user();
             $tenantDomains = $user->tenants->pluck('subdomain');
             // if in request exist subdomain and subdomain not in tenant domains
-            if (count($host) >= 3 && !$tenantDomains->contains($host[0])) {
-                abort(403, 'Unauthorized action.');
+            if (count($host) >= 3) {
+                if (!$tenantDomains->contains($host[0])) {
+                    abort(403, 'Unauthorized action.');
+                }
+                $tenant = Tenant::where('subdomain', $host[0])->first();
+                $user->update(['current_tenant_id' => $tenant->id]);
             }
-            $tenant = Tenant::where('subdomain', $host[0])->first();
-            $user->update(['current_tenant_id' => $tenant->id]);
+
+
         }
 
         return $next($request);
