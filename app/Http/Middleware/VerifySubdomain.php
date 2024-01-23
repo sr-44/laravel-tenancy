@@ -12,16 +12,21 @@ class VerifySubdomain
     /**
      * Handle an incoming request.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response) $next
      */
     public function handle(Request $request, Closure $next): Response
     {
         $host = explode('.', $request->getHost());
-        $currentTenant = auth()->user()->current_tenant_id;
-        $tenantDomain = Tenant::find($currentTenant)->subdomain;
-        if (count($host) >= 3 && $host[0] !== $tenantDomain) {
-            abort(403, 'Unauthorized action.');
+        if (!auth()->guest()) {
+            $tenantDomains = auth()->user()->tenants->pluck('subdomain');
+            // if in request exist subdomain and subdomain not in tenant domains
+            if (count($host) >= 3 && !$tenantDomains->contains($host[0])) {
+                abort(403, 'Unauthorized action.');
+            }
+            $tenant = Tenant::where('subdomain', $host[0])->first();
+            auth()->user()->update(['current_tenant_id' => $tenant->id]);
         }
+
         return $next($request);
     }
 }
