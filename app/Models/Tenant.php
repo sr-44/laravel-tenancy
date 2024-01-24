@@ -17,6 +17,11 @@ class Tenant extends Model
 
     public function users(): BelongsToMany
     {
-        return $this->belongsToMany(User::class);
+        return $this->belongsToMany(User::class)->withPivot('is_owner');
+    }
+
+    public function getOwner()
+    {
+        return $this->users()->wherePivot('is_owner', true)->first();
     }
 }

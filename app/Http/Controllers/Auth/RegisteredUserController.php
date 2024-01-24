@@ -48,7 +48,7 @@ class RegisteredUserController extends Controller
             'name' => $request->name . ' Team',
             'subdomain' => $request->subdomain,
         ]);
-        $tenant->users()->attach($user->id);
+        $tenant->users()->attach($user->id, ['is_owner' => true]);
         $user->update(['current_tenant_id' => $tenant->id]);
         event(new Registered($user));
 

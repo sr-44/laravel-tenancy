@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\TenantController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -33,6 +34,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('tasks', TaskController::class);
     Route::resource('projects', ProjectController::class);
     Route::get('tenants/change/{tenant}', [TenantController::class, 'changeTenant'])->name('tenants.change');
+    Route::resource('users', UserController::class)->only('index', 'store')->middleware('can:manage_users');
 });
 
 require __DIR__.'/auth.php';

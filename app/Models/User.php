@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -44,8 +45,13 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
-    public function tenants()
+    public function tenants(): BelongsToMany
     {
-        return $this->belongsToMany(Tenant::class);
+        return $this->belongsToMany(Tenant::class)->withPivot('is_owner');
+    }
+
+    public function getCurrentTenant()
+    {
+        return $this->tenants()->where('id', $this->current_tenant_id);
     }
 }
