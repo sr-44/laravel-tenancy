@@ -3,22 +3,24 @@
 declare(strict_types=1);
 
 use Stancl\Tenancy\Database\Models\Domain;
-use Stancl\Tenancy\Database\Models\Tenant;
 
 return [
-    'tenant_model' => Tenant::class,
-    'id_generator' => Stancl\Tenancy\UUIDGenerator::class,
+    'tenant_model' => \App\Models\Tenant::class,
+    'id_generator' => null,
 
     'domain_model' => Domain::class,
 
+
+    'create_database' => false,
     /**
      * The list of domains hosting your central app.
      *
      * Only relevant if you're using the domain or subdomain identification middleware.
      */
     'central_domains' => [
-        '127.0.0.1',
-        'localhost',
+        env('TENANCY_CENTRAL_DOMAIN'),
+//        '127.0.0.1',
+//        'localhost',
     ],
 
     /**
@@ -28,10 +30,10 @@ return [
      * To configure their behavior, see the config keys below.
      */
     'bootstrappers' => [
-        Stancl\Tenancy\Bootstrappers\DatabaseTenancyBootstrapper::class,
-        Stancl\Tenancy\Bootstrappers\CacheTenancyBootstrapper::class,
-        Stancl\Tenancy\Bootstrappers\FilesystemTenancyBootstrapper::class,
-        Stancl\Tenancy\Bootstrappers\QueueTenancyBootstrapper::class,
+//        Stancl\Tenancy\Bootstrappers\DatabaseTenancyBootstrapper::class,
+//        Stancl\Tenancy\Bootstrappers\CacheTenancyBootstrapper::class,
+//        Stancl\Tenancy\Bootstrappers\FilesystemTenancyBootstrapper::class,
+//        Stancl\Tenancy\Bootstrappers\QueueTenancyBootstrapper::class,
         // Stancl\Tenancy\Bootstrappers\RedisTenancyBootstrapper::class, // Note: phpredis is needed
     ],
 
