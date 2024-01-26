@@ -33,7 +33,7 @@ class RegisteredUserController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'subdomain' => ['required', 'alpha', 'unique:tenants,subdomain'],
         ]);
@@ -44,18 +44,20 @@ class RegisteredUserController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
+
         $tenant = Tenant::create([
-            'name' => $request->name . ' Team',
-            'subdomain' => $request->subdomain,
+            'name' => $request->subdomain,
         ]);
-        $tenant->users()->attach($user->id, ['is_owner' => true]);
-        $user->update(['current_tenant_id' => $tenant->id]);
+        $tenant->domains()->create([
+            'domain' => $request->subdomain,
+        ]);
+        $user->tenants()->attach($tenant->id);
+
         event(new Registered($user));
 
         Auth::login($user);
 
-        $tenantDomain = str_replace('://','://' . $request->subdomain . '.' , config('app.url'));
-//        dd($tenantDomain);
-        return redirect($tenantDomain . RouteServiceProvider::HOME);
+        return redirect('http://' . $request->subdomain . config('session.domain') . RouteServiceProvider::HOME);
+
     }
 }

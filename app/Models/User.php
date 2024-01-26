@@ -13,6 +13,7 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
+    protected $connection = 'mysql';
     /**
      * The attributes that are mass assignable.
      *
@@ -45,13 +46,9 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
-    public function tenants(): BelongsToMany
+    public function tenants()
     {
-        return $this->belongsToMany(Tenant::class)->withPivot('is_owner');
-    }
+        return $this->belongsToMany(Tenant::class);
 
-    public function getCurrentTenant()
-    {
-        return $this->tenants()->where('id', $this->current_tenant_id);
     }
 }
