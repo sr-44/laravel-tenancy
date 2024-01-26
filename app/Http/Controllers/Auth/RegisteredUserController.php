@@ -35,6 +35,7 @@ class RegisteredUserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'subdomain' => ['required', 'alpha', 'unique:tenants,subdomain'],
         ]);
 
         $user = User::create([
@@ -51,10 +52,12 @@ class RegisteredUserController extends Controller
             'domain' => $request->subdomain,
         ]);
         $user->tenants()->attach($tenant->id);
+
         event(new Registered($user));
 
         Auth::login($user);
 
         return redirect('http://' . $request->subdomain . config('session.domain') . RouteServiceProvider::HOME);
+
     }
 }

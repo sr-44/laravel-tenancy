@@ -5,11 +5,16 @@ use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
 use App\Models\Project;
 use App\Models\Task;
+use App\Models\Tenant;
 
 class TaskController extends Controller
 {
     public function index()
     {
+        $currentTenant = auth()->user()->current_tenant_id;
+//        $tenant = Tenant::find($currentTenant);
+        $currentTenant = auth()->user()->getCurrentTenant();
+//        dd(Tenant::find($currentTenant)->getOwner());
         $tasks = Task::with('project')->get();
 
         return view('tasks.index', compact('tasks'));
